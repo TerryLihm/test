@@ -1,0 +1,74 @@
+1.influxdb的使用
+	作为一个时序数据库，Influxdb能够很好地满足项目需求，完成资源监控
+
+
+2.了解了客户端、服务器端的工作框架
+首先是各个组成部分：浏览器、Nginx（对外Web服务器）、uWSGI（对内Web服务器）、Flask。浏览器作为前端，与Nginx以HTTP协议传输请求与响应；Nginx与uWSGI之间通过socket交流；uWSGI通过WSGI接口与后端Flask框架对接
+
+
+3.为什么要使用url_for?以及它的原理？
+与传统的URL以路由为标记不同，url_for将函数名称作为第一个参数，旨在以函数名称作为索引，方便更改路由时仍然能够有效调用函数。url_for可以接受任意个关键字参数，每个关键字参数对应URL中的变量。未知变量则添加到URL中作为查询参数。
+且使用url_for有以下优点：（1）反转通常比硬编码 URL 的描述性更好。（2）可以只在一个地方改变 URL，而不用到处乱找。（3）URL 创建会为您处理特殊字符的转义，比较直观。（4）生产的路径总是绝对路径，可以避免相对路径产生副作用。（5）如果您的应用是放在 URL 根路径之外的地方（如在 /myapplication 中，不在 / 中）， url_for() 会为您妥善处理。
+
+
+4.为什么要使用argparse以及argparse的使用
+    argparse是一个用于解析命令行参数的python库，让开发人员可以轻松编写用户友好的命令行界面。如果不使用argparse则应用到不同场景时需要在文件内修改各个参数，并且在命令行中反复运行py文件来得到运行结果，若代码规模太大，修改参数的过程将十分艰巨漫长；但是使用argparse后可以避免文件内参数的频繁更改，因为可以将需要频繁修改的参数放置到代码外部，在命令行运行程序时一起输入。
+    使用步骤：
+    （1）导入argparse模块
+    （2）创建ArgumentParse对象，该对象包含将命令行输入内容解析为Python数据的过程所需的所有功能。description为描述信息，可使用python xxx.py -h查看
+    （3）添加需要输入的命令行参数parser.add_argument('xxx', type=int, help='xxx')
+	（）中依次为参数名、参数类型默认为str、描述信息
+    （4）args=parser.parse_args()  ArgumentParser 通过 parse_args() 方法解析参数，获取到命令行中输入的参数
+    （5）将获取的数据作为参数传输到方法中得到结果
+    若想更改参数的输入顺序或在输入参数时可以携带参数名，则可以使用选择型参数，在添加参数时参数名前加上两个"-"
+    另外，argparse还有其他属性例如：required、dest（dest="name"）、action
+
+
+*5.entity的node_cpu_mem_monitor.py文件中save_config()函数里有一段数据拷贝的过程，鉴于已经注释了一部分功能代码，为什么不直接config_content=config呢，进一步讲，为什么不直接使用config而要再进行一次复制？
+
+
+6.json格式和python的字典的区别与联系，为什么在5中不使用字典而使用json？
+	1）json的key只能是字符串，dict的key可以是任意可以hash的对象，例如：字符串、数字、元组
+	2）json的key有序可重复；dict的key不可重复
+	3）json的value只能是字符串、浮点数、bool值或NULL或者由前者构成的数组或对象
+	4）json任意key都有默认值undefined，dict没有
+	5）json访问方式可以用    []  也可以用    .  遍历方式则有in和of dict的value仅可下标访问
+	6）json的字符串强制使用双引号，dict字符串则单双都行
+	7）dict可以嵌套元组tuple，json里只能使用数组
+	8）json:true、false、null    dict:True、False、None
+	9）json的类型是字符串，字典的类型是dict
+
+
+*7.VOICECOMM_FLASK/entity/node_cpu_mem_monitor.py文件中有一行gap_time=30，这应该是为采样间隔时间赋值，但是在上文定义的parse()函数中使用的参数是derivation，这里是否有必要进行统一
+
+
+*8.VOICECOMM_FLASK/entity/node_cpu_mem_monitor.py文件中的get_node_lists(v1)函数中第二行为：
+	stdout, stderror = tmp_res .communicate()
+	显然tmp_res不应该有空格，否则将无法使用communicate方法
+
+
+9.subprocess.Popen()函数的使用：
+	为了能够在python环境中运行操作系统级别的命令，使用subprocess模块。该模块的主要作用是创建一个子进程，且可以使用管道进行通信。一些简单的功能可以使用封装在Popen类之上的函数实现，但是要实现更加复杂的操作时需要用subprocess.Popen()函数完成。比如在程序中我们要执行kubectl get nodes命令。且使用Popen还有其他优点例如：提供更多的功能和灵活性，便于控制子进程的输入和输出，设置环境变量等。
+
+
+10.node.status.address的使用：
+	该方法的返回值是一个包含节点的不同类型地址的列表，每一个地址都有一个type和address字段。type可以是Hostname、ExternalIP、InternalIP等（可以是自定义类型）；address是节点的实际地址，可以是域名或者IP地址。
+
+
+*11.VOICECOMM_FLASK/entity/node_cpu_mem_monitor.py文件中的get_node_lists(v1)函数中的for node_k in node_info_dict.keys()循环中：
+	node_info_dict[node_k]['cpu'] = node_info_dict[node_k]['cpu']
+        node_info_dict[node_k]['memory'] = node_info_dict[node_k]['memory']
+	这两行代码有什么意义吗，等式两边的值没有变化
+
+
+*12.为什么还需要写get_node_lists()和node_cpu_mem_monitor()两个函数，使用Influxdb+grafana(+heapster)就能实现资源监控，或者选择prometheus+grafana也可以实现
+	另外，在该项目中我似乎没有看到html文件中有grafana相关内容。如果想要实现grafana在html的嵌入，可以采取iframe方式，但要先修改相关配置
+
+
+*13.VOICECOMM_FLASK/entity/node_cpu_mem_monitor.py文件中的match_cpu()函数为什么要对raw_data进行除以10的6次方，这样的话，在node_cpu_mem_monitor()函数中可能会导致cpu_mess的单位出现问题。
+
+
+*14.VOICECOMM_FLASK/entity/node_cpu_mem_monitor.py文件中的node_cpu_mem_monitor()函数为什么要在while循环之外进行一遍一样的操作；即使要这么做，为什么不进行函数封装以减少重复代码
+
+
+*15.node_capacity的配置文件什么时候创建的？（没太看懂）
