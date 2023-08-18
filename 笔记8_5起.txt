@@ -1,0 +1,79 @@
+1.阅读node_gpu_monitor.py时对VOICECOMM_FLASK的项目文件和结构有了更清楚的认识：
+	util.DBTools被注释（match_cpu/memory/timestamp）
+	entity.nodeMessage被注释（创建influxdb.client时所需的内容）
+	此文件中的第一个函数match_cpu以及第二个函数match_memory似乎用不着
+	此文件的get_node_lists函数中的for循环为什么有 -3200 -2000等
+
+2.编写单元测试代码：
+	调研后采用方法——使用python的unittest模块完成自动化测试，具体步骤可以分为下述几步：
+	1）TestCase——测试用例：
+	2）TestSuite——测试套件：
+	3）TestRunner——测试执行：
+	4）TestLoader——批量执行测试用例：
+	5）Fixture——固定装置：
+
+3.编写测试代码的大致框架：
+	TestCase
+	1）import unittest导入模块
+	2）class TestDemo(unittest.TestCase)自定义测试类
+	3）def test_method(self)书写测试方法
+	4）执行用例
+	TestSuite(测试套件)和TestRunner(测试执行)——这两个部分适用于管理多个测试用例，因此，一般需要先准备多个测试用例
+	TestLoader(测试加载)与TestSuite功能一样，且用于对它功能进行补充，组装测试样例。
+	tips:一般测试用例是写在Case这个文件夹中，当测试用例非常多时可以考虑使用TestLoader
+	Fixture(测试夹具)——是一种代码结构在某些特定情况下会自动执行
+
+
+4.装饰器：
+	定义：装饰器是一种特殊的语法，本质上是一种函数，它接受一个函数作为参数，并且返回一个新的函数，通常是对原函数的包装和修改。
+	常用场景：
+		1）代码重用和组织
+		2）函数扩展和修改
+		3）权限控制和安全性
+
+5.编写测试代码过程遇到的问题
+	编写测试代码最重要的一点是梳理清楚输入输出的对应关系
+	尤其时v1.list_node().items的结构。
+		1)首先是v1，这是个kubernetes提供的python客户端库的对象，了解个大概即可；
+		2)接着是v1.list_node()方法，它的返回值是一个V1NodeList类型的实例；
+		3)而这个类的结构大概是
+{
+"apiVersion": "v1",
+  "items": [
+    {
+      "metadata": {
+        "name":,
+        "labels": {
+        }
+      },
+      "status": {
+        "capacity": {
+        },
+        "allocatable": {
+        },
+        "addresses": [
+	]
+      }
+    },
+    {
+      "metadata": {
+        "name":,
+        "labels": {
+        }
+      },
+      "status": {
+        "capacity": {
+        },
+        "allocatable": {
+        },
+        "addresses": [
+        ]
+      }
+    }
+  ]
+}
+	还有一些特殊的依赖需要替代，比如[kubectl get nodes]指令、操作系统指令等
+
+	清楚输入输出之后大部分函数都经过了测试
+
+	但是node_cpu_mem_monitor的测试似乎有些问题。逻辑实现虽然很简单，但是比较繁琐，且其中用了许多第三方库的内容比如kubernetes的CoreV1Api等，导致我很难检查出来到底在哪步出了问题。经过多次多种方法编写测试代码之后，最终没有输出，因此我暂时也没有解决方案了。

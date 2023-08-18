@@ -1,0 +1,110 @@
+[
+  {
+    "api_version": "v1",
+    "kind": "Node",
+    "metadata": {
+      "name": "node1",
+      "labels": {
+        "kubernetes.io/hostname": "node1",
+        "node-role.kubernetes.io/master": ""
+      },
+      "annotations": {
+        "node.alpha.kubernetes.io/ttl": "0",
+        "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+      }
+    },
+    "spec": {
+      "pod_cidr": "10.244.0.0/24",
+      "taints": [
+        {
+          "key": "node-role.kubernetes.io/master",
+          "effect": "NoSchedule"
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "type": "Ready",
+          "status": "True",
+          "last_heartbeat_time": "2023-08-11T14:55:47Z",
+          "last_transition_time": "2023-08-11T14:55:47Z",
+          "reason": "KubeletReady",
+          "message": "kubelet is posting ready status"
+        }
+      ],
+      "capacity": {
+        "cpu": "4",
+        "memory": "16384248Ki",
+        "pods": "110"
+      },
+      "allocatable": {
+        "cpu": "4",
+        "memory": "16281848Ki",
+        "pods": "110"
+      },
+      "addresses": [
+        {
+          "type": "InternalIP",
+          "address": "192.168.0.101"
+        },
+        {
+          "type": "Hostname",
+          "address": "node1"
+        }
+      ]
+    }
+  }
+]
+[
+  {
+    "api_version": "v1",
+    "kind": "Node",
+    "metadata": {
+      "name": "node11",
+      "labels": {
+        "kubernetes.io/hostname": "node11",
+        "node-role.kubernetes.io/worker": ""
+      },
+      "annotations": {
+        "node.alpha.kubernetes.io/ttl": "0",
+        "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+      }
+    },
+    "spec": {
+      "pod_cidr": "10.244.10.0/24"
+    },
+    "status": {
+      "conditions": [
+        {
+          "type": "Ready",
+          "status": "True",
+          "last_heartbeat_time": "2023-08-11T14:55:47Z",
+          "last_transition_time": "2023-08-11T14:55:47Z",
+          "reason": "KubeletReady",
+          "message": "kubelet is posting ready status"
+        }
+      ],
+      "capacity": {
+        "cpu": "2",
+        "memory": "8192124Ki",
+        "pods": "110"
+      },
+      "allocatable": {
+        "cpu": "2",
+        "memory": "8089724Ki",
+        "pods": "110"
+      },
+      "addresses": [
+        {
+          "type": "InternalIP",
+          "address": "192.168.0.111"
+        },
+        {
+          "type": "Hostname",
+          "address": "node11"
+        }
+      ]
+    }
+  }
+]
